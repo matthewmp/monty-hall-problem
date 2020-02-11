@@ -1,0 +1,87 @@
+.game-container {
+    min-width: 50%;
+    border: 1px solid lightgray;
+    padding: 10px;
+    margin: 10px;
+}
+
+.title-wrapper {
+    text-align: center;
+    font-family: arial;
+}
+
+.door-number-wrapper {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    margin: 10px;
+    font-size: 1.3em;
+    font-weight: 600;
+    font-family: arial;
+}
+
+.door, .door-container{
+    position: relative;
+    background-image: url('../src/assets/door.png');
+    background-size: cover;
+    max-width: 130px;
+    min-height: 165px;
+    transform-origin: left;
+}
+
+.door{
+    min-width: 110px;
+    transform: perspective(1000px) rotateY(0deg);
+    z-index: 10;
+    /* opacity: 0.5; */
+}
+
+.door-container{
+    box-sizing: border-box;
+    max-width: 125px;
+    background: #3b3b3b;
+}
+
+.doors-wrapper {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+span.prize {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 3em;
+    transform: translate(-50%, -50%);
+}
+
+.wins-loses {
+    margin: 26px auto;
+    text-align: center;
+    padding: 10px;
+    font-size: 1.4em;
+    font-family: arial;
+    color: #3b3b3b;
+}
+
+#wins, #loses{
+    margin: 10px;
+}
+
+@keyframes openDoor{
+    from {
+        transform: perspective(1000px) rotateY(0deg);
+    }
+    to {
+        transform: perspective(1000px) rotateY(-85deg);
+    }
+}
+
+@keyframes closeDoor{
+    from {
+        transform: perspective(1000px) rotateY(-85deg);
+    }
+    to {
+        transform: perspective(1000px) rotateY(0deg);
+    }
+}
