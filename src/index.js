@@ -3,11 +3,14 @@ import emojis from './emoji.struct';
 import { View } from './view';
 
 class Game{
-    constructor(DOMElement){
+    // DOMElement is parent node of game HTML
+    // Mode is set to true to always switch doors, false to always keep selected door
+    constructor(DOMElement, mode){
         this.doors = [];
         this.wins = 0;
         this.loses = 0;
         this.numOfGamesPlayed = 0;
+        this.alwaysSwitch = mode;
         
         this.firstDoorSelected = null;
         this.doorShown = null;
@@ -21,12 +24,12 @@ class Game{
         this.setDoorPrizes();
         this.view.render(this.doors);
         this.selectFirstDoor();
+        window.safeToStart = false;
     }
 
     setDoorPrizes(){
         this.view.closeAllDoors();
         this.doors = this._shufflePrizes(this.prizeArray.slice());
-        console.log(this.doors);
     }
 
     _shufflePrizes(prizeArray){
@@ -53,19 +56,21 @@ class Game{
 
         this.firstDoorSelected = randomIndex;
         this.view.highlightSelectedDoor(randomIndex);
-        console.log('RI: ', randomIndex, 'First: ', this.firstDoorSelected)
         this.selectSecondDoor();
     }
 
     selectSecondDoor(){
-        console.log('1st Door Selected: ', this.firstDoorSelected)
         for(let i = 0; i < this.doors.length; i++){
             if(i !== this.firstDoorSelected && this.doors[i] !== emojis.money){
                 this.view.openDoor(i)
                 this.doorShown = i;
-                console.log('Door Shown: ', this.doorShown);
                 setTimeout(() => {
-                    this.switchDoors();
+                    if(this.alwaysSwitch){
+                        this.switchDoors();
+                    } else {
+                        this.keepSelectedDoor();
+                    }
+                    
                 },1000);
                 return;
             }
@@ -80,12 +85,16 @@ class Game{
         this.finalDoorSelected = doorOptions[0];
         this.view.highlightSelectedDoor(this.finalDoorSelected);
 
-        console.log('Final Door Selected: ', this.finalDoorSelected);
-        console.warn(`1st: ${this.firstDoorSelected}, Shown: ${this.doorShown}, Final: ${this.finalDoorSelected}`);
-        console.warn(this.doors);
         this.view.openDoor(this.finalDoorSelected);
         setTimeout(() => {
-            
+            this.checkWin();
+        },500);
+    }
+
+    keepSelectedDoor(){
+        this.finalDoorSelected = this.firstDoorSelected;
+        this.view.openDoor(this.finalDoorSelected);
+        setTimeout(() => {
             this.checkWin();
         },500);
     }
@@ -100,7 +109,6 @@ class Game{
     }
 
     win(){
-        console.log('win')
         this.wins++;
         this.view.updateWins(this.wins);
         this.calculateWinRatio();
@@ -110,7 +118,6 @@ class Game{
     }
 
     lose(){
-        console.log('lose')
         this.loses++;
         this.view.updateLoses(this.loses);
         this.calculateWinRatio();
@@ -136,17 +143,29 @@ class Game{
             setTimeout(() => {
                 this.selectFirstDoor();
             },500);
+        } else {
+            window.safeToStart = true;
         }
     }
 }
 
-window.Game = Game;
+
 window.onload = function(){
-    const gameAlwaysSwitch= new Game('game-always-switch');
-    window.gameAlwaysSwitch = gameAlwaysSwitch;
-    gameAlwaysSwitch.init();
-    
-    const gameNeverSwitch= new Game('game-never-switch');
-    window.gameNeverSwitch = gameNeverSwitch;
-    gameNeverSwitch.init();
+    window.safeToStart = true;
+    const startGames = () =>{
+        if(safeToStart){
+            const gameAlwaysSwitch= new Game('game-always-switch', true);
+            const gameNeverSwitch= new Game('game-never-switch', false);
+            gameAlwaysSwitch.init();    
+            gameNeverSwitch.init(); 
+        }
+        else {
+            alert('Game must finish before restarting.');
+        }
+    }
+
+    const btnStart = document.getElementById('start');
+    btnStart.addEventListener('click', () => {
+        startGames();
+    })
 }

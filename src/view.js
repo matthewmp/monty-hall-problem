@@ -17,7 +17,6 @@ export class View {
     }
 
     closeAllDoors(){
-        console.log('App: ', this.door1)
         this.door1.nextElementSibling.style.animation = 'closeDoor 300ms forwards';
         this.door2.nextElementSibling.style.animation = 'closeDoor 300ms forwards';
         this.door3.nextElementSibling.style.animation = 'closeDoor 300ms forwards';

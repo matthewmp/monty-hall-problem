@@ -1,13 +1,21 @@
+body {
+    text-align: center;
+}
+
 .game-container {
     min-width: 50%;
     border: 1px solid lightgray;
     padding: 10px;
-    margin: 10px;
+    margin: auto;
+    max-width: 500px;
 }
 
 .title-wrapper {
     text-align: center;
     font-family: arial;
+    background: #888;
+    color: #fff;
+    font-size: 1.4em;
 }
 
 .door-number-wrapper {
@@ -66,6 +74,33 @@ span.prize {
 
 #wins, #loses{
     margin: 10px;
+}
+
+span#ratio {
+    color: #ff00ff;
+}
+
+div#startGame {
+    font-size: 1.2em;
+    font-family: arial;
+    background: #4cdaf6;
+    color: #3d3939;
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+button#start {
+    width: 100px;
+    height: 50px;
+    font-size: 1em;
+    border: 1px solid #1c1c1c;
+    font-family: arial;
+    border-radius: 5px;
+    background: #d33535;
+    color: #fff;
+    cursor: pointer;
 }
 
 @keyframes openDoor{
