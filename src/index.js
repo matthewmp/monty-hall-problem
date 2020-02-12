@@ -1,8 +1,9 @@
 import './main.css';
 import emojis from './emoji.struct';
+import { View } from './view';
 
 class Game{
-    constructor(){
+    constructor(DOMElement){
         this.doors = [];
         this.wins = 0;
         this.loses = 0;
@@ -13,55 +14,19 @@ class Game{
         this.finalDoorSelected = null;
         
         this.prizeArray = [emojis.poop, emojis.poop, emojis.money];
-        this.door1 = null;
-        this.door2 = null;
-        this.door3 = null;
-        this.winsText = null;
-        this.losesText = null;
-        this.ratio = null;
+        this.view = new View(DOMElement);
     }
 
     init(){
-        this.grabElements();
         this.setDoorPrizes();
-        this.render();
+        this.view.render(this.doors);
+        this.selectFirstDoor();
     }
 
     setDoorPrizes(){
-        this.closeAllDoors();
+        this.view.closeAllDoors();
         this.doors = this._shufflePrizes(this.prizeArray.slice());
         console.log(this.doors);
-    }
-
-    grabElements(){
-        this.door1 = document.getElementsByClassName('prize-one')[0];
-        this.door2 = document.getElementsByClassName('prize-two')[0];
-        this.door3 = document.getElementsByClassName('prize-three')[0];
-        this.winsText = document.getElementById('wins');
-        this.losesText = document.getElementById('loses');
-        this.ratio = document.getElementById('ratio');
-    }
-
-    render(){
-        this.door1.innerHTML = this.doors[0];
-        this.door2.innerHTML = this.doors[1];
-        this.door3.innerHTML = this.doors[2];
-    }
-
-    closeAllDoors(){
-        this.door1.nextElementSibling.style.animation = 'closeDoor 300ms forwards';
-        this.door2.nextElementSibling.style.animation = 'closeDoor 300ms forwards';
-        this.door3.nextElementSibling.style.animation = 'closeDoor 300ms forwards';
-    }
-
-    openDoor(num){
-        const doorNum = `door${num+1}`;
-        this[doorNum].nextElementSibling.style.animation = 'openDoor 300ms forwards';
-    }
-
-    closeDoor(num){
-        const doorNum = `door${num+1}`;
-        this[doorNum].nextElementSibling.style.animation = 'closeDoor 300ms forwards';
     }
 
     _shufflePrizes(prizeArray){
@@ -82,17 +47,12 @@ class Game{
     return prizeArray;
     }
 
-    // Highlight First Selected Door
-    highlightSelectedDoor(door){
-        this[`door${door + 1}`].nextElementSibling.style.filter = 'hue-rotate(45deg)';
-    }
-
     // Game Play
     selectFirstDoor(){
         let randomIndex = Math.floor(Math.random() * this.doors.length);
 
         this.firstDoorSelected = randomIndex;
-        this.highlightSelectedDoor(randomIndex);
+        this.view.highlightSelectedDoor(randomIndex);
         console.log('RI: ', randomIndex, 'First: ', this.firstDoorSelected)
         this.selectSecondDoor();
     }
@@ -101,10 +61,9 @@ class Game{
         console.log('1st Door Selected: ', this.firstDoorSelected)
         for(let i = 0; i < this.doors.length; i++){
             if(i !== this.firstDoorSelected && this.doors[i] !== emojis.money){
-                this.openDoor(i)
+                this.view.openDoor(i)
                 this.doorShown = i;
                 console.log('Door Shown: ', this.doorShown);
-                // debugger
                 setTimeout(() => {
                     this.switchDoors();
                 },1000);
@@ -114,17 +73,17 @@ class Game{
     }
 
     switchDoors(){
-        this.unhighlightAllDoors();
+        this.view.unhighlightAllDoors();
         let doorOptions = [0,1,2];
         doorOptions.splice(doorOptions.indexOf(this.firstDoorSelected),1);
         doorOptions.splice(doorOptions.indexOf(this.doorShown),1);
         this.finalDoorSelected = doorOptions[0];
-        this.highlightSelectedDoor(this.finalDoorSelected);
+        this.view.highlightSelectedDoor(this.finalDoorSelected);
 
         console.log('Final Door Selected: ', this.finalDoorSelected);
         console.warn(`1st: ${this.firstDoorSelected}, Shown: ${this.doorShown}, Final: ${this.finalDoorSelected}`);
         console.warn(this.doors);
-        this.openDoor(this.finalDoorSelected);
+        this.view.openDoor(this.finalDoorSelected);
         setTimeout(() => {
             
             this.checkWin();
@@ -143,7 +102,7 @@ class Game{
     win(){
         console.log('win')
         this.wins++;
-        this.winsText.innerText = this.wins;
+        this.view.updateWins(this.wins);
         this.calculateWinRatio();
         setTimeout(() => {
             this.resetGame();
@@ -153,7 +112,7 @@ class Game{
     lose(){
         console.log('lose')
         this.loses++;
-        this.losesText.innerText = this.loses;
+        this.view.updateLoses(this.loses);
         this.calculateWinRatio();
         setTimeout(() => {
             this.resetGame();
@@ -162,23 +121,17 @@ class Game{
 
     calculateWinRatio(){
         let ratio = (this.wins / (this.wins + this.loses)) * 100;
-        this.ratio.innerText = ratio.toFixed(2);
-    }
-
-    unhighlightAllDoors(){
-        this.door1.nextElementSibling.style.filter = 'hue-rotate(0deg)';
-        this.door2.nextElementSibling.style.filter = 'hue-rotate(0deg)';
-        this.door3.nextElementSibling.style.filter = 'hue-rotate(0deg)';
+        this.view.updateRatio(ratio.toFixed(2));
     }
 
     resetGame(){
         this.numOfGamesPlayed++;
-        this.unhighlightAllDoors();
+        this.view.unhighlightAllDoors();
         this.firstDoorSelected = null;
         this.finalDoorSelected = null;
         this.doorShown = null;
         this.setDoorPrizes();
-        this.render();
+        this.view.render(this.doors);
         if(this.numOfGamesPlayed < 100){
             setTimeout(() => {
                 this.selectFirstDoor();
@@ -189,11 +142,11 @@ class Game{
 
 window.Game = Game;
 window.onload = function(){
-    // document.getElementsByClassName('door-container')[0].innerHTML += 
-    // `<span class="prize">${emojis.poop}</span>`;
-
-    var x= new Game();
-    x.init();
-    window.x = x;
-    window.x.selectFirstDoor();
+    const gameAlwaysSwitch= new Game('game-always-switch');
+    window.gameAlwaysSwitch = gameAlwaysSwitch;
+    gameAlwaysSwitch.init();
+    
+    const gameNeverSwitch= new Game('game-never-switch');
+    window.gameNeverSwitch = gameNeverSwitch;
+    gameNeverSwitch.init();
 }

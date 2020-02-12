@@ -9,7 +9,37 @@
 <body>
     <script src="./src/index.js"></script>
 
-    <div class="game-container">
+    <div id="game-always-switch" class="game-container">
+        <div class="title-wrapper">
+            <span class="game-title">Always Switch</span>
+        </div>
+        <div class="door-number-wrapper">
+            <div class="door-numbers">1</div>
+            <div class="door-numbers">2</div>
+            <div class="door-numbers">3</div>
+        </div>
+        <div class="doors-wrapper">
+            <div class="door-container">
+                <span class="prize prize-one"></span>
+                <div class="door door-1"></div>
+            </div>
+            <div class="door-container">
+                <span class="prize prize-two"></span>
+                <div class="door door-2"></div>
+            </div>    
+            <div class="door-container">
+                <span class="prize prize-three"></span>
+                <div class="door door-3"></div>
+            </div>  
+        </div>
+        <div class="wins-loses">
+            Wins: <span id="wins">0</span>
+            Loses:<span id="loses">0</span>
+            Win/Ratio: <span id="ratio">0</span>%
+        </div>
+    </div>  
+
+    <div id="game-never-switch" class="game-container">
         <div class="title-wrapper">
             <span class="game-title">Always Switch</span>
         </div>
