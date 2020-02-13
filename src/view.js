@@ -8,6 +8,10 @@ export class View {
         this.winsText = this.app.querySelector('#wins');
         this.losesText = this.app.querySelector('#loses');
         this.ratio = this.app.querySelector('#ratio');
+
+        this.updateWins(0);
+        this.updateLoses(0);
+        this.updateRatio(0);
     }
 
     render(doorsArray){
