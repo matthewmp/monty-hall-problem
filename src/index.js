@@ -144,6 +144,10 @@ class Game{
                 this.selectFirstDoor();
             },500);
         } else {
+            this.doors = [];
+            this.wins = 0;
+            this.loses = 0;
+            this.numOfGamesPlayed = 0;
             window.safeToStart = true;
         }
     }

@@ -2,6 +2,16 @@ body {
     text-align: center;
 }
 
+main, h1 {
+    font-family: arial;
+}
+
+main{
+    text-align: left;
+    padding: 20px;
+    font-size: 1.3em;
+}
+
 .game-container {
     min-width: 50%;
     border: 1px solid lightgray;
